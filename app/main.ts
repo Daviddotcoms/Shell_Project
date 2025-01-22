@@ -10,7 +10,13 @@ function replCommand() {
       rl.close();
       return 0;
     }
-    rl.write(`${answer}: command not found\n`);
+    if (answer.includes("echo")) {
+      const toPrint = answer.split(" ");
+      const slicedWords = toPrint.slice(1, toPrint.length);
+      rl.write(`${slicedWords.join(" ")}\n`);
+    } else {
+      rl.write(`${answer}: command not found\n`);
+    }
     replCommand();
   });
 }
