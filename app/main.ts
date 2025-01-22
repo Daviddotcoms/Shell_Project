@@ -6,7 +6,7 @@ const rl = createInterface({
 });
 function replCommand() {
   rl.question("$ ", (answer) => {
-    if (answer === "exit") {
+    if (answer === "exit 0") {
       rl.close();
       return 0;
     }
