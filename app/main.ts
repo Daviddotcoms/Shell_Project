@@ -18,7 +18,7 @@ function replCommand() {
           rl.write(`${secParam} is a shell builtin\n`);
         }
       } else {
-        rl.write(`${answer}: command not found\n`);
+        rl.write(`${secParam}: command not found\n`);
       }
     } else if (commands[0] === "echo") {
       const slicedWords = commands.slice(1, commands.length);
