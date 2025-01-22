@@ -6,6 +6,10 @@ const rl = createInterface({
 });
 function replCommand() {
   rl.question("$ ", (answer) => {
+    if (answer === "exit") {
+      rl.close();
+      return 0;
+    }
     rl.write(`${answer}: command not found\n`);
     replCommand();
   });
