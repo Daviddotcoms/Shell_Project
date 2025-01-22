@@ -8,11 +8,15 @@ const rl = createInterface({
 function replCommand() {
   rl.question("$ ", (answer) => {
     const secParam = answer.split(" ")[1];
-    const validCommands = ["echo", "exit"];
+    const validCommands = ["echo", "exit", "type"];
     const commands = answer.split(" ");
     if (answer.includes(`type ${secParam}`)) {
       if (validCommands.includes(secParam)) {
-        rl.write(`${secParam} is a shell builtin\n`);
+        if (commands.length > 2) {
+          rl.write(`${answer}: command not found\n`);
+        } else {
+          rl.write(`${secParam} is a shell builtin\n`);
+        }
       } else {
         rl.write(`${answer}: command not found\n`);
       }
