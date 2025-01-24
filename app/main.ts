@@ -11,7 +11,7 @@ const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
 
 function replCommand() {
   rl.question("$ ", (answer) => {
-    let command = answer.slice(5);
+    let command = answer.slice(5).trim();
     if (answer === "exit 0") {
       rl.close();
       return 0;
@@ -32,7 +32,7 @@ function replCommand() {
           }
         }
         if (!foundedPath) {
-          console.log(`${command}: not found\n`);
+          console.log(`${command}: not found`);
         }
       }
     }
