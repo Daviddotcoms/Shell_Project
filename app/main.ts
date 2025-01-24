@@ -1,35 +1,49 @@
 import { createInterface } from "readline";
+import fs from "fs";
+import path from "path";
 
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
+const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
+
 function replCommand() {
   rl.question("$ ", (answer) => {
-    const secParam = answer.split(" ")[1];
-    const validCommands = ["echo", "exit", "type"];
-    const commands = answer.split(" ");
-    if (answer.includes(`type ${secParam}`)) {
-      if (validCommands.includes(secParam)) {
-        if (commands.length > 2) {
-          rl.write(`${answer}: command not found\n`);
-        } else {
-          rl.write(`${secParam} is a shell builtin\n`);
-        }
-      } else {
-        rl.write(`${secParam}: not found\n`);
-      }
-    } else if (commands[0] === "echo") {
-      const slicedWords = commands.slice(1, commands.length);
-      rl.write(`${slicedWords.join(" ")}\n`);
-    } else if (answer === "exit 0") {
+    let command = answer.slice(5);
+    if (answer === "exit 0") {
       rl.close();
       return 0;
-    } else {
-      rl.write(`${answer}: command not found\n`);
+    } else if (answer.startsWith("echo")) {
+      rl.write(`${command}\n`);
+      return replCommand();
+    } else if (answer.startsWith("type")) {
+      if (VALID_COMMANDS.includes(command)) {
+        rl.write(`${command} is a shell builtin\n`);
+      } else {
+        let found = false;
+        const paths = process.env.PATH?.split(":") ?? [];
+        paths.forEach((path) => {
+          try {
+            const cmds = fs.readdirSync(path).filter((cmd) => {
+              cmd === command;
+            });
+            if (cmds.length > 0) {
+              found = true;
+              cmds.forEach(() => {
+                console.log(`${command} is ${path}/${command}`);
+              });
+            }
+          } catch (error: any) {
+            // console.log('Error while trying to read the dir of the path: ', error);
+          }
+        });
+        if (!found) {
+          console.log(`${command}: not found`);
+        }
+      }
     }
-
     replCommand();
   });
 }
