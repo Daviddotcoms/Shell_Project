@@ -22,25 +22,17 @@ function replCommand() {
       if (VALID_COMMANDS.includes(command)) {
         rl.write(`${command} is a shell builtin\n`);
       } else {
-        let found = false;
-        const paths = process.env.PATH?.split(":") ?? [];
-        paths.forEach((path) => {
-          try {
-            const cmds = fs.readdirSync(path).filter((cmd) => {
-              cmd === command;
-            });
-            if (cmds.length > 0) {
-              found = true;
-              cmds.forEach(() => {
-                console.log(`${command} is ${path}/${command}`);
-              });
-            }
-          } catch (error: any) {
-            // console.log('Error while trying to read the dir of the path: ', error);
+        let foundedPath: string = "";
+        const paths = process.env.PATH?.split(path.delimiter) ?? [];
+        for (const dir of paths) {
+          const pathEnv = findExecutable(dir, command);
+          if (pathEnv) {
+            foundedPath = pathEnv;
+            rl.write(`${command} is ${foundedPath}\n`);
           }
-        });
-        if (!found) {
-          console.log(`${command}: not found`);
+        }
+        if (!foundedPath) {
+          console.log(`${command}: not found\n`);
         }
       }
     }
@@ -49,3 +41,14 @@ function replCommand() {
 }
 
 replCommand();
+
+function findExecutable(dir: string, command: string): string | null {
+  const ext = [".exe", ".bat", ".cmd", ""];
+  for (const extention of ext) {
+    const pathExe = path.join(dir, command + extention);
+    if (fs.existsSync(pathExe)) {
+      return pathExe;
+    }
+  }
+  return null;
+}
