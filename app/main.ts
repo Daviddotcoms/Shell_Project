@@ -35,6 +35,8 @@ function replCommand() {
           console.log(`${command}: not found`);
         }
       }
+    } else {
+      rl.write(`${answer}: not found\n`);
     }
     replCommand();
   });
