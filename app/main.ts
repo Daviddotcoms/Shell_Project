@@ -11,7 +11,7 @@ const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
 
 function replCommand() {
   rl.question("$ ", (answer) => {
-    let command = answer.slice(5).trim();
+    let command = answer.slice(5);
     if (answer === "exit 0") {
       rl.close();
       return 0;
