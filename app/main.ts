@@ -28,30 +28,27 @@ function findExecutable(command: string): string | null {
 function replCommand() {
   rl.question("$ ", (answer: string) => {
     let [command, ...args] = answer.trim().split(" ");
-    if (answer === "exit 0") {
+    if (command === "exit") {
       rl.close();
-      return 0;
+      const exitStatus = answer.split(" ")[1];
+      process.exit(exitStatus ? parseInt(exitStatus) : 0);
     } else if (command === "echo") {
       rl.write(`${args.join(" ")}\n`);
-      return replCommand();
     } else if (command === "type") {
       if (VALID_COMMANDS.includes(args[0])) {
         rl.write(`${args[0]} is a shell builtin\n`);
       } else {
-        let foundedPath: string = "";
         const pathEnv = findExecutable(args[0]);
         if (pathEnv !== null) {
-          foundedPath = pathEnv;
-          rl.write(`${args[0]} is ${foundedPath}\n`);
-        }
-        if (!foundedPath) {
+          rl.write(`${args[0]} is ${pathEnv}\n`);
+        } else {
           console.log(`${args[0]}: not found`);
         }
       }
     } else if (findExecutable(command)) {
       execSync(answer, { stdio: "inherit" });
     } else {
-      rl.write(`${answer}: not found\n`);
+      rl.write(`${answer}: command not found\n`);
     }
     replCommand();
   });
