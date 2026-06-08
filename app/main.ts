@@ -62,9 +62,13 @@ function replCommand() {
     } else if (command === "pwd") {
       rl.write(`${currentPath}\n`);
     } else if (command === "cd") {
-      const newPath = args[0]
-        ? path.resolve(currentPath, args[0])
-        : process.env.HOME;
+      if ((args[0] = "~")) {
+        if (process.env.HOME) {
+          process.chdir(process.env.HOME);
+        }
+      }
+
+      const newPath = path.resolve(currentPath, args[0]);
       if (newPath) {
         try {
           process.chdir(newPath);
