@@ -10,6 +10,7 @@ const rl = createInterface({
 
 const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
 
+// ? THIS FUNCTION JUST CHECKS IF THE FILE EXISTS, BUT IT DOESN'T CHECK IF THE FILE IS EXECUTABLE OR NOT
 // function findExecutable(command: string): string | null {
 //   const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz", ""];
 //   const paths = process.env.PATH?.split(path.delimiter) ?? [];
@@ -25,6 +26,7 @@ const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
 //   return null;
 // }
 
+// ? THIS FUNCTION INCLUDES THE constants.X_OF TO CHECK IF THE FILE IS EXECUTABLE OR NOT
 const findExecutable = (command: string) => {
   const folder = process.env.PATH?.split(path.delimiter).find((path) => {
     if (!fs.existsSync(path + "/" + command)) return false;
@@ -55,6 +57,8 @@ function replCommand() {
           console.log(`${args[0]}: not found`);
         }
       }
+    } else if (command === "pwd") {
+      rl.write(`${process.cwd()}\n`);
     } else if (findExecutable(command)) {
       execSync(answer, { stdio: "inherit" });
     } else {
