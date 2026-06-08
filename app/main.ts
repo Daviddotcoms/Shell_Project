@@ -62,7 +62,7 @@ function replCommand() {
     } else if (command === "pwd") {
       rl.write(`${currentPath}\n`);
     } else if (command === "cd") {
-      if ((args[0] = "~")) {
+      if (args[0] === "~") {
         if (process.env.HOME) {
           process.chdir(process.env.HOME);
         }
