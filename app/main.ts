@@ -10,20 +10,30 @@ const rl = createInterface({
 
 const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
 
-function findExecutable(command: string): string | null {
-  const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz"];
-  const paths = process.env.PATH?.split(path.delimiter) ?? [];
+// function findExecutable(command: string): string | null {
+//   const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz", ""];
+//   const paths = process.env.PATH?.split(path.delimiter) ?? [];
 
-  for (const dir of paths) {
-    for (const extention of ext) {
-      const pathExe = path.join(dir, command + extention);
-      if (fs.existsSync(pathExe)) {
-        return pathExe;
-      }
-    }
-  }
-  return null;
-}
+//   for (const dir of paths) {
+//     for (const extention of ext) {
+//       const pathExe = path.join(dir, command + extention);
+//       if (fs.existsSync(pathExe)) {
+//         return pathExe;
+//       }
+//     }
+//   }
+//   return null;
+// }
+
+const findExecutable = (command: string) => {
+  const folder = process.env.PATH?.split(path.delimiter).find((path) => {
+    if (!fs.existsSync(path + "/" + command)) return false;
+    if (!(fs.constants.X_OK & fs.statSync(path + "/" + command).mode))
+      return false;
+    return true;
+  });
+  return folder ? folder + "/" + command : null;
+};
 
 function replCommand() {
   rl.question("$ ", (answer: string) => {
