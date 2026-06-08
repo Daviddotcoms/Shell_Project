@@ -11,7 +11,7 @@ const rl = createInterface({
 const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
 
 function findExecutable(command: string): string | null {
-  const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz", ""];
+  const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz"];
   const paths = process.env.PATH?.split(path.delimiter) ?? [];
 
   for (const dir of paths) {
