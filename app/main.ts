@@ -8,7 +8,7 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-const VALID_COMMANDS: string[] = ["echo", "exit", "type"];
+const VALID_COMMANDS: string[] = ["echo", "exit", "type", "pwd"];
 
 // ? THIS FUNCTION JUST CHECKS IF THE FILE EXISTS, BUT IT DOESN'T CHECK IF THE FILE IS EXECUTABLE OR NOT
 // function findExecutable(command: string): string | null {
