@@ -8,7 +8,9 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-const VALID_COMMANDS: string[] = ["echo", "exit", "type", "pwd"];
+const VALID_COMMANDS: string[] = ["echo", "exit", "type", "pwd", "cd"];
+
+let currentPath = process.cwd();
 
 // ? THIS FUNCTION JUST CHECKS IF THE FILE EXISTS, BUT IT DOESN'T CHECK IF THE FILE IS EXECUTABLE OR NOT
 // function findExecutable(command: string): string | null {
@@ -58,7 +60,19 @@ function replCommand() {
         }
       }
     } else if (command === "pwd") {
-      rl.write(`${process.cwd()}\n`);
+      rl.write(`${currentPath}\n`);
+    } else if (command === "cd") {
+      const newPath = args[0]
+        ? path.resolve(currentPath, args[0])
+        : process.env.HOME;
+      if (newPath) {
+        try {
+          process.chdir(newPath);
+          currentPath = process.cwd();
+        } catch (error) {
+          rl.write(`${error}\n`);
+        }
+      }
     } else if (findExecutable(command)) {
       execSync(answer, { stdio: "inherit" });
     } else {
