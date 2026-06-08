@@ -70,7 +70,7 @@ function replCommand() {
           process.chdir(newPath);
           currentPath = process.cwd();
         } catch (error) {
-          rl.write(`${error}\n`);
+          rl.write(`${answer}: No such file or directory\n`);
         }
       }
     } else if (findExecutable(command)) {
