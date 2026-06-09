@@ -49,6 +49,17 @@ function replCommand() {
     } else if (command === "echo") {
       let echoMessage = args.filter(Boolean).join(" ");
 
+      // ! QUOTING: DOUBLE QUOTES
+      if (echoMessage.includes('"')) {
+        echoMessage = echoMessage.replaceAll('"', "");
+        if (echoMessage.indexOf('"') + 1 !== echoMessage.lastIndexOf('"')) {
+          echoMessage = args.join(" ").replaceAll('"', "");
+          rl.write(`${echoMessage}\n`);
+          return replCommand();
+        }
+      }
+
+      // ! QUOTING: SINGLE QUOTES
       if (echoMessage.includes("'")) {
         echoMessage = echoMessage.replaceAll("'", "");
         if (echoMessage.indexOf("'") + 1 !== echoMessage.lastIndexOf("'")) {
