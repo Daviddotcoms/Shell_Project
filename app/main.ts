@@ -56,6 +56,7 @@ function replCommand() {
           echoMessage = args
             .join(" ")
             .replaceAll(/""/g, "")
+            .replaceAll(/"\s*"/g, " ")
             .replaceAll('"', "");
           rl.write(`${echoMessage}\n`);
           return replCommand();
