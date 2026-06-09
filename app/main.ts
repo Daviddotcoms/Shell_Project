@@ -2,6 +2,7 @@ import { createInterface } from "readline";
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
+import { parse } from "shell-quote";
 
 const rl = createInterface({
   input: process.stdin,
@@ -13,20 +14,20 @@ const VALID_COMMANDS: string[] = ["echo", "exit", "type", "pwd", "cd"];
 let currentPath = process.cwd();
 
 // ? THIS FUNCTION JUST CHECKS IF THE FILE EXISTS, BUT IT DOESN'T CHECK IF THE FILE IS EXECUTABLE OR NOT
-// function findExecutable(command: string): string | null {
-//   const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz", ""];
-//   const paths = process.env.PATH?.split(path.delimiter) ?? [];
+function findExecutableType(command: string): string | null {
+  const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz", ""];
+  const paths = process.env.PATH?.split(path.delimiter) ?? [];
 
-//   for (const dir of paths) {
-//     for (const extention of ext) {
-//       const pathExe = path.join(dir, command + extention);
-//       if (fs.existsSync(pathExe)) {
-//         return pathExe;
-//       }
-//     }
-//   }
-//   return null;
-// }
+  for (const dir of paths) {
+    for (const extention of ext) {
+      const pathExe = path.join(dir, command + extention);
+      if (fs.existsSync(pathExe)) {
+        return pathExe;
+      }
+    }
+  }
+  return null;
+}
 
 // ? THIS FUNCTION INCLUDES THE constants.X_OF TO CHECK IF THE FILE IS EXECUTABLE OR NOT
 const findExecutable = (command: string) => {
@@ -41,53 +42,38 @@ const findExecutable = (command: string) => {
 
 function replCommand() {
   rl.question("$ ", (answer: string) => {
-    let [command, ...args] = answer.trim().split(" ");
+    let input = answer.trim();
+    const args = parse(input) as string[];
+    const command = args[0];
     if (command === "exit") {
       rl.close();
       const exitStatus = answer.split(" ")[1];
       process.exit(exitStatus ? parseInt(exitStatus) : 0);
     } else if (command === "echo") {
-      let echoMessage = args.filter(Boolean).join(" ");
-
-      // ! QUOTING: DOUBLE QUOTES
-      if (echoMessage.includes('"')) {
-        echoMessage = echoMessage.replace(/"([^"]*)"/g, (_, inner) => inner);
-        echoMessage = echoMessage.replaceAll('"', "");
-        rl.write(`${echoMessage}\n`);
-        return replCommand();
-      }
-
-      // ! QUOTING: SINGLE QUOTES
-      if (echoMessage.includes("'")) {
-        echoMessage = echoMessage.replaceAll("'", "");
-        if (echoMessage.indexOf("'") + 1 !== echoMessage.lastIndexOf("'")) {
-          echoMessage = args.join(" ").replaceAll("'", "");
-        }
-      }
-
+      let echoMessage = args.slice(1).join(" ");
       rl.write(`${echoMessage}\n`);
     } else if (command === "type") {
-      if (VALID_COMMANDS.includes(args[0])) {
-        rl.write(`${args[0]} is a shell builtin\n`);
+      if (VALID_COMMANDS.includes(args[1])) {
+        rl.write(`${args[1]} is a shell builtin\n`);
       } else {
-        const pathEnv = findExecutable(args[0]);
+        const pathEnv = findExecutableType(args[1]);
         if (pathEnv !== null) {
-          rl.write(`${args[0]} is ${pathEnv}\n`);
+          rl.write(`${args[1]} is ${pathEnv}\n`);
         } else {
-          console.log(`${args[0]}: not found`);
+          console.log(`${args[1]}: not found`);
         }
       }
     } else if (command === "pwd") {
       rl.write(`${currentPath}\n`);
     } else if (command === "cd") {
       const newPath =
-        args[0] === "~" ? process.env.HOME : path.resolve(currentPath, args[0]);
+        args[1] === "~" ? process.env.HOME : path.resolve(currentPath, args[1]);
       if (newPath) {
         try {
           process.chdir(newPath);
           currentPath = process.cwd();
         } catch (error) {
-          rl.write(`${command}: ${args[0]}: No such file or directory\n`);
+          rl.write(`${command}: ${args[1]}: No such file or directory\n`);
         }
       }
     } else if (findExecutable(command)) {
