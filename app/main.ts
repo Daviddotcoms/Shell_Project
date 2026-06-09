@@ -54,6 +54,7 @@ function replCommand() {
         echoMessage = echoMessage.replaceAll('"', "");
         if (echoMessage.indexOf('"') + 1 !== echoMessage.lastIndexOf('"')) {
           echoMessage = args
+            .filter(Boolean)
             .join(" ")
             .replaceAll(/""/g, "")
             .replaceAll(/"\s*"/g, " ")
