@@ -53,7 +53,10 @@ function replCommand() {
       if (echoMessage.includes('"')) {
         echoMessage = echoMessage.replaceAll('"', "");
         if (echoMessage.indexOf('"') + 1 !== echoMessage.lastIndexOf('"')) {
-          echoMessage = args.join(" ").replaceAll('"', "");
+          echoMessage = args
+            .join(" ")
+            .replaceAll(/"\s*"/g, " ")
+            .replaceAll('"', "");
           rl.write(`${echoMessage}\n`);
           return replCommand();
         }
