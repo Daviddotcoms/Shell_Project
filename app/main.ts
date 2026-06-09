@@ -14,20 +14,20 @@ const VALID_COMMANDS: string[] = ["echo", "exit", "type", "pwd", "cd"];
 let currentPath = process.cwd();
 
 // ? THIS FUNCTION JUST CHECKS IF THE FILE EXISTS, BUT IT DOESN'T CHECK IF THE FILE IS EXECUTABLE OR NOT
-function findExecutableType(command: string): string | null {
-  const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz", ""];
-  const paths = process.env.PATH?.split(path.delimiter) ?? [];
+// function findExecutableType(command: string): string | null {
+//   const ext = [".exe", ".bat", ".cmd", ".rpm", ".sh", ".deb", ".tar.gz", ""];
+//   const paths = process.env.PATH?.split(path.delimiter) ?? [];
 
-  for (const dir of paths) {
-    for (const extention of ext) {
-      const pathExe = path.join(dir, command + extention);
-      if (fs.existsSync(pathExe)) {
-        return pathExe;
-      }
-    }
-  }
-  return null;
-}
+//   for (const dir of paths) {
+//     for (const extention of ext) {
+//       const pathExe = path.join(dir, command + extention);
+//       if (fs.existsSync(pathExe)) {
+//         return pathExe;
+//       }
+//     }
+//   }
+//   return null;
+// }
 
 // ? THIS FUNCTION INCLUDES THE constants.X_OF TO CHECK IF THE FILE IS EXECUTABLE OR NOT
 const findExecutable = (command: string) => {
@@ -56,7 +56,7 @@ function replCommand() {
       if (VALID_COMMANDS.includes(args[1])) {
         rl.write(`${args[1]} is a shell builtin\n`);
       } else {
-        const pathEnv = findExecutableType(args[1]);
+        const pathEnv = findExecutable(args[1]);
         if (pathEnv !== null) {
           rl.write(`${args[1]} is ${pathEnv}\n`);
         } else {
