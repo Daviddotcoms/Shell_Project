@@ -47,7 +47,16 @@ function replCommand() {
       const exitStatus = answer.split(" ")[1];
       process.exit(exitStatus ? parseInt(exitStatus) : 0);
     } else if (command === "echo") {
-      rl.write(`${args.join(" ")}\n`);
+      let echoMessage = args.filter(Boolean).join(" ");
+
+      if (echoMessage.includes("'")) {
+        echoMessage = echoMessage.replaceAll("'", "");
+        if (echoMessage.indexOf("'") + 1 !== echoMessage.lastIndexOf("'")) {
+          echoMessage = args.join(" ").replaceAll("'", "");
+        }
+      }
+
+      rl.write(`${echoMessage}\n`);
     } else if (command === "type") {
       if (VALID_COMMANDS.includes(args[0])) {
         rl.write(`${args[0]} is a shell builtin\n`);
