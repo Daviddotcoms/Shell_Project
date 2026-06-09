@@ -51,16 +51,10 @@ function replCommand() {
 
       // ! QUOTING: DOUBLE QUOTES
       if (echoMessage.includes('"')) {
+        echoMessage = echoMessage.replace(/"([^"]*)"/g, (_, inner) => inner);
         echoMessage = echoMessage.replaceAll('"', "");
-        if (echoMessage.indexOf('"') + 1 !== echoMessage.lastIndexOf('"')) {
-          echoMessage = args
-            .join(" ")
-            .replaceAll(/""/g, "")
-            .replaceAll(/"\s*"/g, " ")
-            .replaceAll('"', "");
-          rl.write(`${echoMessage}\n`);
-          return replCommand();
-        }
+        rl.write(`${echoMessage}\n`);
+        return replCommand();
       }
 
       // ! QUOTING: SINGLE QUOTES
